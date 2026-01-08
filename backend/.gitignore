@@ -2,15 +2,25 @@
 .gradle/
 build/
 
+# ===== Eclipse / STS =====
+.settings/
+.project
+.classpath
+bin/
+
+# ===== IDE =====
+.idea/
+.vscode/
+
+
+# ===== Java =====
+*.class
+
 # ===== Logs =====
 *.log
 
 # ===== OS =====
 .DS_Store
-
-# ===== IDE =====
-.idea/
-.vscode/
 
 # ===== 기타 =====
 out/
