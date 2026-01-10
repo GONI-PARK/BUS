@@ -1,7 +1,17 @@
+import Header from '../components/Header';
+import { useNavigate } from 'react-router-dom';
+
 const Home = () => {
+  const nav = useNavigate();
+
+  const onClickButton = () => {
+    nav('/Input1');
+  };
+
   return (
     <div>
-      <h1>Welcome to the Home Page</h1>
+      <Header />
+      <button onClick={onClickButton}>Input1 페이지로 이동</button>
     </div>
   );
 };
