@@ -1,21 +1,25 @@
 package com.hana.bus.dto.bus;
-
 public class BusScheduleListRequestDto {
 
-    private String date;      
+    private String date;
     private String busType;
 
-    public BusScheduleListRequestDto(String date, String dayOfWeek, String busType) {
-        this.date = date;
-        this.busType = busType;
+    public BusScheduleListRequestDto() {
     }
 
     public String getDate() {
         return date;
     }
 
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public String getBusType() {
         return busType;
+    }
+
+    public void setBusType(String busType) {
+        this.busType = busType;
     }
 }
