@@ -1,6 +1,11 @@
 package com.hana.bus.entity.bus;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "bus_schedule")
@@ -24,6 +29,20 @@ public class BusScheduleEntity {
 
     protected BusScheduleEntity() {
         // JPA 기본 생성자
+    }
+
+    public BusScheduleEntity(
+            String companyName,
+            String busType,
+            String departure,
+            String arrival,
+            String operationTime
+    ) {
+        this.companyName = companyName;
+        this.busType = busType;
+        this.departure = departure;
+        this.arrival = arrival;
+        this.operationTime = operationTime;
     }
 
     public Long getId() {
