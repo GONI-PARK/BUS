@@ -5,10 +5,13 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.hana.bus.dto.bus.BusScheduleInsertRequestDto;
 import com.hana.bus.dto.bus.BusScheduleListRequestDto;
 import com.hana.bus.dto.bus.BusScheduleListResponseDto;
 import com.hana.bus.entity.bus.BusScheduleEntity;
 import com.hana.bus.repository.bus.BusScheduleRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class BusScheduleService {
@@ -19,9 +22,8 @@ public class BusScheduleService {
         this.repository = repository;
     }
 
-    public List<BusScheduleListResponseDto> getBusScheduleList(
-            BusScheduleListRequestDto request
-    ) {
+    public List<BusScheduleListResponseDto> getBusScheduleList(BusScheduleListRequestDto request) 
+    {
         List<BusScheduleListResponseDto> result = new ArrayList<>();
 
         List<BusScheduleEntity> entities =
@@ -40,6 +42,20 @@ public class BusScheduleService {
         }
 
         return result;
+    }
+    // ✅ insert API용 메서드 (추가)
+    @Transactional
+    public void insertBusSchedule(BusScheduleInsertRequestDto request) {
+
+        BusScheduleEntity entity = new BusScheduleEntity(
+        		request.getCompanyName(),
+        		request.getBusType(),
+        		request.getDeparture(),
+        		request.getArrival(),
+        		request.getOperationTime()
+        );
+
+        repository.save(entity);
     }
 
 }
