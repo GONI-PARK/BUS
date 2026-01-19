@@ -1,14 +1,13 @@
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import { useNavigate } from 'react-router-dom';
-import HomeContainer from '../components/HomeContainer';
+import Header from '../components/layouts/Header';
+import HeroSection from '../components/Home/HeroSection';
+import AdditionalInfo from '../components/Home/AdditionalInfo';
 
 const Home = () => {
   return (
     <div>
       <Header />
-      <HomeContainer />
-      <Footer />
+      <HeroSection />
+      <AdditionalInfo />
     </div>
   );
 };
