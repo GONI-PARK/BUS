@@ -47,4 +47,17 @@ public class EstimateSchedule {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+    
+    public String getTripType() {
+        return tripType;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
 }

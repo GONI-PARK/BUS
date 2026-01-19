@@ -35,4 +35,13 @@ public class EstimateBusRequest {
         this.busType = busType;
         this.busCount = busCount;
     }
+    
+    public String getBusType() {
+        return busType;
+    }
+
+    public Integer getBusCount() {
+        return busCount;
+    }
+
 }

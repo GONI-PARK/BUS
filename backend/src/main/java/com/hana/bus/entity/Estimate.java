@@ -49,4 +49,28 @@ public class Estimate {
     public Long getId() {
         return id;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public Integer getAdultCount() {
+        return adultCount;
+    }
+
+    public Integer getChildCount() {
+        return childCount;
+    }
+
+    public String getLuggageType() {
+        return luggageType;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }
