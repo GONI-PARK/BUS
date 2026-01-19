@@ -53,4 +53,26 @@ public class EstimateContact {
         this.note = note;
         this.travelAgencyName = travelAgencyName;
     }
+    
+    
+    public String getNameKanji() {
+        return nameKanji;
+    }
+
+    public String getNameKana() {
+        return nameKana;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
 }

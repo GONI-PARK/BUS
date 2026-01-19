@@ -44,4 +44,21 @@ public class EstimateRoute {
         this.detailAddress = detailAddress;
         this.routeOrder = routeOrder;
     }
+    
+    public String getRouteType() {
+        return routeType;
+    }
+
+    public Integer getRouteOrder() {
+        return routeOrder;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public String getDetailAddress() {
+        return detailAddress;
+    }
+
 }
