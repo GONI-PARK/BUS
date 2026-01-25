@@ -46,18 +46,19 @@ public class EstimateService {
     }
 
     @Transactional
-    public void create(EstimateCreateRequestDto requestDto) {
+    public void create(Long companyId, EstimateCreateRequestDto requestDto) {
 
     	validateBasic(requestDto.getBasic());
     	
         Estimate savedEstimate = estimateRepository.save(
                 new Estimate(
-                        requestDto.getBasic().getPurpose(),
-                        requestDto.getBasic().getAdultCount(),
-                        requestDto.getBasic().getChildCount(),
-                        requestDto.getBasic().getLuggageType()
+                    companyId,
+                    requestDto.getBasic().getPurpose(),
+                    requestDto.getBasic().getAdultCount(),
+                    requestDto.getBasic().getChildCount(),
+                    requestDto.getBasic().getLuggageType()
                 )
-        );
+            );
 
         scheduleRepository.save(
                 new EstimateSchedule(
