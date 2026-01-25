@@ -43,5 +43,6 @@ public class EstimateBusRequest {
     public Integer getBusCount() {
         return busCount;
     }
+    
 
 }

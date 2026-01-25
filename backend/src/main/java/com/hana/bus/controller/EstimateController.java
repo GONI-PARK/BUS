@@ -26,14 +26,18 @@ public class EstimateController {
         this.estimateService = estimateService;
     }
 
+
     @PostMapping
     public ResponseEntity<Void> create(
             @RequestBody EstimateCreateRequestDto request) {
 
-        estimateService.create(request);
+        estimateService.create(
+            request.getCompanyId(),
+            request
+        );
+
         return ResponseEntity.ok().build();
     }
-
 
 }
 

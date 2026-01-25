@@ -3,7 +3,7 @@ package com.hana.bus.dto.estimate;
 import java.util.List;
 
 public class EstimateCreateRequestDto {
-
+	private Long companyId;
     private EstimateBasicDto basic;
     private EstimateScheduleDto schedule;
     private List<EstimateRouteDto> routes;
@@ -13,6 +13,11 @@ public class EstimateCreateRequestDto {
     public EstimateCreateRequestDto() {
     }
 
+    
+    public Long getCompanyId() {
+        return companyId;
+    }
+    
     public EstimateBasicDto getBasic() {
         return basic;
     }

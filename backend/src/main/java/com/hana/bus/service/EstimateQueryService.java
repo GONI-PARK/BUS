@@ -38,22 +38,24 @@ public class EstimateQueryService {
         this.contactRepository = contactRepository;
     }
 
-    public EstimateDetailResponse getDetail(Long estimateId) {
+    public EstimateDetailResponse getDetail(Long companyId, Long estimateId) {
 
-        Estimate estimate = estimateRepository.findById(estimateId)
-                .orElseThrow(() -> new IllegalArgumentException("견적이 존재하지 않습니다."));
+        Estimate estimate = estimateRepository
+            .findByIdAndCompanyId(estimateId, companyId)
+            .orElseThrow(() -> new IllegalArgumentException("견적이 존재하지 않습니다."));
 
         return EstimateDetailResponse.from(
-                estimate,
-                scheduleRepository.findByEstimateId(estimateId).orElse(null),
-                routeRepository.findByEstimateIdOrderByRouteOrderAsc(estimateId),
-                busRequestRepository.findByEstimateId(estimateId),
-                contactRepository.findByEstimateId(estimateId).orElse(null)
+            estimate,
+            scheduleRepository.findByEstimateId(estimateId).orElse(null),
+            routeRepository.findByEstimateIdOrderByRouteOrderAsc(estimateId),
+            busRequestRepository.findByEstimateId(estimateId),
+            contactRepository.findByEstimateId(estimateId).orElse(null)
         );
     }
     
     @Transactional(readOnly = true)
     public List<EstimateListItemDto> getList(
+            Long companyId,
             LocalDate fromDate,
             LocalDate toDate
     ) {
@@ -61,28 +63,34 @@ public class EstimateQueryService {
         LocalDateTime to = toDate.atTime(23, 59, 59);
 
         List<Estimate> estimates =
-                estimateRepository.findByCreatedAtBetweenOrderByCreatedAtDesc(from, to);
+            estimateRepository
+                .findByCompanyIdAndCreatedAtBetweenOrderByCreatedAtDesc(
+                    companyId,
+                    from,
+                    to
+                );
 
         return estimates.stream().map(estimate -> {
 
             EstimateContact contact =
-                    contactRepository.findByEstimateId(estimate.getId()).orElse(null);
+                contactRepository.findByEstimateId(estimate.getId()).orElse(null);
 
             EstimateBusRequest bus =
-            		busRequestRepository.findByEstimateId(estimate.getId())
-                            .stream()
-                            .findFirst()
-                            .orElse(null);
+                busRequestRepository.findByEstimateId(estimate.getId())
+                    .stream()
+                    .findFirst()
+                    .orElse(null);
 
             return new EstimateListItemDto(
-                    estimate.getId(),
-                    estimate.getCreatedAt(),
-                    "버스 회사명 ", // ← 아직 버스 회사명은 없음; 
-                    bus != null ? bus.getBusType() : null,
-                    contact != null ? contact.getNameKanji() : null,
-                    contact != null ? contact.getPhone() : null,
-                    contact != null ? contact.getEmail() : null
+                estimate.getId(),
+                estimate.getCreatedAt(),
+                "버스 회사명",
+                bus != null ? bus.getBusType() : null,
+                contact != null ? contact.getNameKanji() : null,
+                contact != null ? contact.getPhone() : null,
+                contact != null ? contact.getEmail() : null
             );
         }).toList();
     }
+
 }
