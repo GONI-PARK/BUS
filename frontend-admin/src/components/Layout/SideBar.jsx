@@ -7,6 +7,7 @@ import { FunnelIcon } from '@heroicons/react/20/solid';
 const subCategories = [
   { name: '대쉬보드', path: '/dashboard' },
   { name: '버스관리', path: '/bus-management' },
+  { name: '버스 관리 조회', path: '/bus-management-view' },
   { name: '견적 확인 화면', path: '/quotes' },
 ];
 

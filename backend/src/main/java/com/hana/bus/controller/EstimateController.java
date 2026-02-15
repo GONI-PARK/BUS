@@ -31,6 +31,10 @@ public class EstimateController {
     public ResponseEntity<Void> create(
             @RequestBody EstimateCreateRequestDto request) {
 
+        System.out.println("=== DTO 수신 확인 ===");
+        System.out.println(request);
+        System.out.println("companyId = " + request.getCompanyId());
+
         estimateService.create(
             request.getCompanyId(),
             request

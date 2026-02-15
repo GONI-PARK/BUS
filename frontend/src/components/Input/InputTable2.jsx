@@ -1,49 +1,81 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import useBusStore from '../../store/Store';
 
 export default function InputTable2() {
   const navigate = useNavigate();
-  const { setFormData } = useBusStore();
 
-  // 1. 버스 회사 목록
-  const busCompanies = [
-    { id: 1, name: 'A-Bus 투어' },
-    { id: 2, name: 'B-네트워크' },
-    { id: 3, name: 'C-리무진 서비스' },
-    { id: 4, name: 'D-그린 트래블' },
-  ];
+  // ✅ Zustand에서 데이터 가져오기
+  const { formData, setCompanyId } = useBusStore();
 
-  // 2. 선택된 회사 ID들을 배열로 관리 (중복 선택용)
-  const [selectedIds, setSelectedIds] = useState([]);
+  const startDate = formData.schedule.startDate;
+  const endDate = formData.schedule.endDate;
+  const busType = formData.buses[0]?.busType;
 
-  // 3. 체크박스 토글 함수
-  const toggleSelection = (id) => {
-    if (selectedIds.includes(id)) {
-      // 이미 선택되어 있다면 제거
-      setSelectedIds(selectedIds.filter((selectedId) => selectedId !== id));
-    } else {
-      // 선택되어 있지 않다면 추가
-      setSelectedIds([...selectedIds, id]);
-    }
-  };
+  // ✅ 회사 목록 상태
+  const [companies, setCompanies] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // 4. 전송 버튼 클릭 시 실행될 함수
-  const handleConfirmSelection = () => {
-    if (selectedIds.length === 0) {
-      alert('최소 하나 이상의 회사를 선택해 주세요!');
+  // ✅ 페이지 진입 시 자동 검색
+  useEffect(() => {
+    if (!startDate || !endDate || !busType) {
+      console.warn('검색 조건 부족');
       return;
     }
 
-    // 선택된 ID들에 해당하는 회사 객체들 필터링
-    const selectedData = busCompanies.filter((c) => selectedIds.includes(c.id));
-    const selectedNames = selectedData.map((c) => c.name);
+    fetchCompanies();
+  }, [startDate, endDate, busType]);
 
-    setFormData({
-      selectedBuses: selectedNames,
-    });
+  // ✅ API 호출
+  const fetchCompanies = async () => {
+    try {
+      setLoading(true);
 
-    console.log(selectedNames); // 배열 형태로 로그 출력
+      console.log('검색조건:', {
+        startDate,
+        endDate,
+        busType,
+      });
+
+      const res = await axios.get(
+        'http://localhost:8080/admin/bus-schedules/search',
+        {
+          params: {
+            startDate,
+            endDate,
+            busType,
+          },
+        },
+      );
+
+      console.log('서버 응답:', res.data);
+
+      setCompanies(res.data);
+    } catch (err) {
+      console.error(err);
+      alert('회사 목록 조회 실패');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ 회사 선택
+  const selectCompany = (id) => {
+    setSelectedId(id);
+  };
+
+  // ✅ 다음 단계
+  const handleConfirmSelection = () => {
+    if (!selectedId) {
+      alert('회사를 선택해주세요!');
+      return;
+    }
+
+    setCompanyId(selectedId);
+
+    console.log('선택된 회사 ID:', selectedId);
 
     navigate('/InputPage3');
   };
@@ -51,48 +83,70 @@ export default function InputTable2() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6">
       <div className="max-w-2xl mx-auto">
+        {/* 제목 */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">
-            버스 회사 중복 선택
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900">バス会社を選択</h2>
           <p className="mt-1 text-sm text-gray-500">
-            원하는 회사를 모두 체크해 주세요.
+            希望する会社を選択してください。
           </p>
         </div>
 
-        {/* 테이블 섹션 */}
-        <div className="bg-white shadow ring-1 ring-black ring-opacity-5 rounded-lg overflow-hidden">
+        {/* 테이블 */}
+        <div className="bg-white shadow rounded-lg overflow-hidden">
           <table className="min-w-full divide-y divide-gray-300">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
-                  회사명
+                <th className="px-6 py-4 text-left text-sm font-semibold">
+                  会社名
                 </th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">
-                  선택
+                <th className="px-6 py-4 text-right text-sm font-semibold">
+                  選択
                 </th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-gray-200 bg-white">
-              {busCompanies.map((company) => (
+              {/* 로딩 */}
+              {loading && (
+                <tr>
+                  <td colSpan="2" className="text-center py-6 text-gray-500">
+                    불러오는 중...
+                  </td>
+                </tr>
+              )}
+
+              {/* 데이터 없음 */}
+              {!loading && companies.length === 0 && (
+                <tr>
+                  <td colSpan="2" className="text-center py-6 text-gray-400">
+                    검색 결과가 없습니다.
+                  </td>
+                </tr>
+              )}
+
+              {/* 결과 출력 */}
+
+              {companies.map((company) => (
                 <tr
-                  key={company.id}
-                  onClick={() => toggleSelection(company.id)} // 행 클릭 시 토글
-                  className={`cursor-pointer transition-colors ${
-                    selectedIds.includes(company.id)
+                  key={company.companyId}
+                  onClick={() => selectCompany(company.companyId)}
+                  className={`cursor-pointer transition ${
+                    selectedId === company.companyId
                       ? 'bg-indigo-50'
                       : 'hover:bg-gray-50'
                   }`}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {company.name}
+                  <td className="px-6 py-4 text-sm font-medium">
+                    {company.companyName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
+
+                  <td className="px-6 py-4 text-right">
                     <input
-                      type="checkbox" // ★ 라디오에서 체크박스로 변경
-                      checked={selectedIds.includes(company.id)}
-                      onChange={() => toggleSelection(company.id)}
-                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-600"
+                      type="radio"
+                      name="company"
+                      checked={selectedId === company.companyId}
+                      onChange={() => selectCompany(company.companyId)}
+                      className="h-4 w-4 text-indigo-600"
                     />
                   </td>
                 </tr>
@@ -101,31 +155,24 @@ export default function InputTable2() {
           </table>
         </div>
 
-        {/* 하단 전송 버튼 영역 */}
-        <div className="mt-8 flex justify-end items-center gap-x-6">
-          <div className="mt-8 flex justify-end items-center gap-x-4">
-            <span className="text-sm text-gray-500">
-              선택된 항목: <strong>{selectedIds.length}</strong>개
-            </span>
+        {/* 버튼 */}
+        <div className="mt-8 flex justify-end gap-x-4">
+          <button
+            onClick={() => window.history.back()}
+            className="px-6 py-2 border rounded text-gray-700"
+          >
+            戻る
+          </button>
 
-            <button
-              type="button"
-              onClick={() => window.history.back()} // 브라우저 이전 페이지로 이동 (또는 props.onPrev 호출)
-              className="px-6 py-2 rounded-md text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-all"
-            >
-              戻る
-            </button>
-            <button
-              onClick={handleConfirmSelection}
-              className={`rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
-                selectedIds.length > 0
-                  ? 'bg-indigo-600 hover:bg-indigo-700 shadow-md'
-                  : 'bg-gray-300 cursor-not-allowed'
-              }`}
-            >
-              次へ
-            </button>
-          </div>
+          <button
+            onClick={handleConfirmSelection}
+            disabled={!selectedId}
+            className={`px-6 py-2 rounded text-white font-semibold ${
+              selectedId ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-300'
+            }`}
+          >
+            次へ
+          </button>
         </div>
       </div>
     </div>

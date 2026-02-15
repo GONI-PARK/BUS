@@ -1,3 +1,5 @@
+import QuotesFunction from '../components/QuotesFunction';
+
 export default function Quotes() {
-  return <div>Hello3</div>;
+  return <QuotesFunction />;
 }

@@ -1,3 +1,5 @@
+import BusScheduleInput from '../components/BusScheduleInput.jsx';
+
 export default function BusManagement() {
-  return <div>Hello2</div>;
+  return <BusScheduleInput />;
 }
